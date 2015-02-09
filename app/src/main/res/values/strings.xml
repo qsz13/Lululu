@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Lululu</string>
+    <string name="app_name">撸撸撸</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="clear">Clear</string>
+    <string name="title_section1">速度模式</string>
+    <string name="title_section2">幽灵模式</string>
+    <string name="title_section3">持久模式</string>
+    <string name="Start">开始</string>
+    <string name="Stop">停止</string>
+    <string name="SensorData">传感器数据</string>
 
 </resources>
