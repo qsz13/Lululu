@@ -6,6 +6,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.widget.TextView;
@@ -27,7 +28,23 @@ public class LuingActivity extends ActionBarActivity implements SensorEventListe
     private TextView totalTextView;
     private LineChart mChart;
     private LineData mSensorData;
+    private float[] lastSensorData = new float[] {0,0,0};
+
     private ArrayList<String> xVals = new ArrayList<String>();
+
+    //runs without a timer by reposting this handler at the end of the runnable
+    Handler timerHandler = new Handler();
+    Runnable doRecord = new Runnable() {
+
+        @Override
+        public void run() {
+            long millis = System.currentTimeMillis();
+
+            addPoint(millis,lastSensorData[1]);
+
+            timerHandler.postDelayed(this, 30);
+        }
+    };
 
 
     @Override
@@ -55,19 +72,23 @@ public class LuingActivity extends ActionBarActivity implements SensorEventListe
     protected void onResume() {
         super.onResume();
         mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_FASTEST);
+        timerHandler.post(doRecord);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        timerHandler.removeCallbacks(doRecord);
+        mSensorManager.unregisterListener(this,mAccelerometer);
     }
 
     @Override
     public void onSensorChanged(SensorEvent event){
+        lastSensorData = event.values.clone();
         float x = event.values[0];
         float y = event.values[1];
         float z = event.values[2];
         double module = Math.cbrt(x*x+y*y+z*z);
-
-        if (module > 3)
-        {
-            addPoint(event.timestamp,y);
-        }
 
         if(y>1&& module>3 && !is_up) {
             is_up = true;
@@ -90,7 +111,6 @@ public class LuingActivity extends ActionBarActivity implements SensorEventListe
         mSensorData.addEntry(new Entry(y,xIndex),0);
 
         //refresh chart
-        mChart.setData(mSensorData);
         mChart.notifyDataSetChanged();
         mChart.invalidate();
     }
