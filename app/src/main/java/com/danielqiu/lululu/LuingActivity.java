@@ -5,13 +5,10 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
+import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.widget.TextView;
-
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
@@ -19,8 +16,6 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Random;
 
 public class LuingActivity extends ActionBarActivity implements SensorEventListener {
 
@@ -96,6 +91,8 @@ public class LuingActivity extends ActionBarActivity implements SensorEventListe
 
         //refresh chart
         mChart.setData(mSensorData);
+        mChart.notifyDataSetChanged();
+        mChart.invalidate();
     }
 
     @Override
