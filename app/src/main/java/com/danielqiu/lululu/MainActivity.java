@@ -1,7 +1,5 @@
 package com.danielqiu.lululu;
 
-import java.util.Locale;
-
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.Fragment;
@@ -9,31 +7,21 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
+import com.danielqiu.lululu.models.DatabaseHelper;
+import com.danielqiu.lululu.models.RecordType;
+
 
 public class MainActivity extends ActionBarActivity implements ViewPager.OnPageChangeListener {
 
-    /**
-     * The {@link android.support.v4.view.PagerAdapter} that will provide
-     * fragments for each of the sections. We use a
-     * {@link FragmentPagerAdapter} derivative, which will keep every
-     * loaded fragment in memory. If this becomes too memory intensive, it
-     * may be best to switch to a
-     * {@link android.support.v4.app.FragmentStatePagerAdapter}.
-     */
     SectionsPagerAdapter mSectionsPagerAdapter;
-
-    /**
-     * The {@link ViewPager} that will host the section contents.
-     */
     ViewPager mViewPager;
-
-    Button mButton;
+    Button mStartButton;
+    DatabaseHelper db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +33,7 @@ public class MainActivity extends ActionBarActivity implements ViewPager.OnPageC
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
-        mButton = (Button)findViewById(R.id.startButton);
+        mStartButton = (Button)findViewById(R.id.startButton);
 
 
         // Set up the ViewPager with the sections adapter.
@@ -57,6 +45,7 @@ public class MainActivity extends ActionBarActivity implements ViewPager.OnPageC
 
     public void onStartButtonClick(View view) {
         Intent intent = new Intent(this,LuingActivity.class);
+        intent.putExtra("Mode", RecordType.values()[ mViewPager.getCurrentItem()]);
         startActivity(intent);
     }
 
@@ -130,9 +119,9 @@ public class MainActivity extends ActionBarActivity implements ViewPager.OnPageC
                 case 0:
                     return getString(R.string.title_section1);
                 case 1:
-                    return getString(R.string.title_section2);
-                case 2:
                     return getString(R.string.title_section3);
+                case 2:
+                    return getString(R.string.title_section2);
             }
             return null;
         }
