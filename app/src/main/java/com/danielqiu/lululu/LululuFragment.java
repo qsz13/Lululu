@@ -1,6 +1,7 @@
 package com.danielqiu.lululu;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +26,7 @@ import java.util.List;
 /**
  * Created by Jeffrey on 2015/2/9.
  */
-public class LululuFragment extends Fragment {
+public class LululuFragment extends Fragment implements DatabaseHelper.OnRecordChangedListener {
     /**
      * The fragment argument representing the section number for this
      * fragment.
@@ -83,7 +84,22 @@ public class LululuFragment extends Fragment {
         LineData sensorData =  new LineData(xVals, new LineDataSet(yVals,getString(R.string.SensorData)));
 
         chart.setData(sensorData);
-        chart.setMinimumHeight(100);
+        chart.setMinimumHeight(200);
         return  chart;
+    }
+
+    @Override
+    public void Update(Record record) {
+
+    }
+
+    @Override
+    public void Insert(Record record) {
+        mRecordsLayout.addView(Assemble(record));
+    }
+
+    @Override
+    public void Delete(Record record) {
+        //TODO:remove view
     }
 }

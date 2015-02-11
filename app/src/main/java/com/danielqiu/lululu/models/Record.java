@@ -1,10 +1,12 @@
 package com.danielqiu.lululu.models;
 
+import com.danielqiu.lululu.App;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -30,16 +32,17 @@ public class Record {
     private int Mode;
 
     @ForeignCollectionField(eager = true,columnName = RecordPoint.RECORD_FK_COLUMN_NAME)
-     ForeignCollection<RecordPoint> Entries;
+    private ForeignCollection<RecordPoint> Entries;
 
     protected Record()
     {}
 
-    public Record(RecordType type,Calendar startTime,float duration,int count){
+    public Record(RecordType type,Calendar startTime,float duration,int count) throws SQLException {
         Mode = type.ordinal();
         StartDateTime = startTime.getTimeInMillis();
         Duration = duration;
         Count = count;
+        Entries = App.getDatabase().getRecordDao().getEmptyForeignCollection(RecordPoint.RECORD_FK_COLUMN_NAME);
     }
 
     public RecordType getMode()

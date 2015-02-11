@@ -43,7 +43,7 @@ public class RecordPoint {
         SensorY = y;
         SensorZ = z;
         Time = time;
-        Group = group;
+        setGroup(group);
     }
 
     public float getSensorX() {
@@ -60,5 +60,13 @@ public class RecordPoint {
 
     public float getTime() {
         return Time;
+    }
+
+    public Record getGroup() {
+        return Group;
+    }
+
+    public void setGroup(Record group) {
+        Group = group;
     }
 }

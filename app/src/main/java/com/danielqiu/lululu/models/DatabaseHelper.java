@@ -28,16 +28,34 @@ import com.j256.ormlite.table.TableUtils;
  */
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
+
+    public interface OnRecordChangedListener{
+        void Update(Record record);
+        void Insert(Record record);
+        void Delete(Record record);
+    }
+
     // name of the database file for your application -- change to something appropriate for your app
     private static final String DATABASE_NAME = "lululu.db";
     // any time you make changes to your database objects, you may have to increase the database version
     private static final int DATABASE_VERSION = 1;
 
+    private  OnRecordChangedListener recordChangedListener;
+
     // the DAO object we use to access the SimpleData table
-    private Dao<Record, Integer> simpleDao = null;
+    private Dao<Record, Integer> recordDao = null;
+    private Dao<RecordPoint, Integer> recordPointDao = null;
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    }
+
+    public OnRecordChangedListener getRecordChangedListener() {
+        return recordChangedListener;
+    }
+
+    public void setRecordChangedListener(OnRecordChangedListener recordChangedListener) {
+        this.recordChangedListener = recordChangedListener;
     }
 
     /**
@@ -77,11 +95,18 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
      * Returns the Database Access Object (DAO) for our SimpleData class. It will create it or just give the cached
      * value.
      */
-    private Dao<Record, Integer> getRecordDao() throws SQLException {
-        if (simpleDao == null) {
-            simpleDao = getDao(Record.class);
+    public Dao<Record, Integer> getRecordDao() throws SQLException {
+        if (recordDao == null) {
+            recordDao = getDao(Record.class);
         }
-        return simpleDao;
+        return recordDao;
+    }
+
+    public Dao<RecordPoint, Integer> getRecordPointsDao() throws SQLException {
+        if (recordPointDao == null) {
+            recordPointDao = getDao(RecordPoint.class);
+        }
+        return recordPointDao;
     }
 
     public List<Record> getRecords(RecordType type) throws SQLException {
@@ -89,12 +114,19 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         return getRecordDao().queryForEq("Mode",mode);
     }
 
-    public  void newRecord(Record r,ArrayList<RecordPoint> points) throws SQLException {
+    public  void newRecord(Record r) throws SQLException {
         Dao<Record,Integer> dao = getRecordDao();
-        dao.assignEmptyForeignCollection(r,RecordPoint.RECORD_FK_COLUMN_NAME);
+        Dao<RecordPoint,Integer> pointsDao = getRecordPointsDao();
         dao.create(r);
-        for (RecordPoint p : points)
-            r.Entries.add(p);
+        //NOTE: the points in Record.Entries may not insert into DB before
+        for (RecordPoint p : r.getEntries()) {
+            p.setGroup(r);
+            pointsDao.create(p);
+        }
+
+        if (recordChangedListener != null){
+            recordChangedListener.Insert(r);
+        }
     }
 
     /**
@@ -103,6 +135,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     @Override
     public void close() {
         super.close();
-        simpleDao = null;
+        recordDao = null;
+        recordPointDao = null;
+        recordChangedListener = null;
     }
 }
