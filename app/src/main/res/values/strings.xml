@@ -11,5 +11,8 @@
     <string name="Start">开始</string>
     <string name="Stop">停止</string>
     <string name="SensorData">传感器数据</string>
+    <string name="title_activity_wear_main">WearMainActivity</string>
+    <string name="hello_round">Hello Round World!</string>
+    <string name="hello_square">Hello Square World!</string>
 
 </resources>
