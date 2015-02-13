@@ -106,7 +106,7 @@ public class LuingActivity extends Activity implements SensorEventListener {
             Record record = new Record(mode,startTime,curr.getTimeInMillis() - startTime.getTimeInMillis() ,count);
             record.getEntries().addAll(points);
             App.getDatabase().newRecord(record);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

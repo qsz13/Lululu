@@ -1,6 +1,7 @@
 package com.danielqiu.lululu;
 
 import android.os.Bundle;
+import android.os.Debug;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +18,6 @@ import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.j256.ormlite.dao.Dao;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -50,19 +50,20 @@ public class LululuFragment extends Fragment implements DatabaseHelper.OnRecordC
         return fragment;
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_lululu, container, false);
         mRecordsLayout = (LinearLayout)rootView.findViewById(R.id.records);
-
+        mRecordsLayout.removeAllViews();
+        Log.d("fragment","createView");
         try {
-            App.getDatabase().setRecordChangedListener(this);
+            App.getDatabase().addRecordChangedListener(this);
              List<Record> data =App.getDatabase().getRecords(recordType);
             for (Record item : data) {
                 mRecordsLayout.addView(Assemble(item));
             }
+            mRecordsLayout.invalidate();
 
         } catch (SQLException e) {
             e.printStackTrace();

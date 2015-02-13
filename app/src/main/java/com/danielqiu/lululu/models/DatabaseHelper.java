@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import android.app.Activity;
 import android.app.Application;
@@ -40,7 +41,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     // any time you make changes to your database objects, you may have to increase the database version
     private static final int DATABASE_VERSION = 1;
 
-    private  OnRecordChangedListener recordChangedListener;
+    private  ArrayList<OnRecordChangedListener> recordChangedListener = new ArrayList<OnRecordChangedListener>();
 
     // the DAO object we use to access the SimpleData table
     private Dao<Record, Integer> recordDao = null;
@@ -50,12 +51,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
-    public OnRecordChangedListener getRecordChangedListener() {
-        return recordChangedListener;
-    }
-
-    public void setRecordChangedListener(OnRecordChangedListener recordChangedListener) {
-        this.recordChangedListener = recordChangedListener;
+    public void addRecordChangedListener(OnRecordChangedListener recordChangedListener) {
+        this.recordChangedListener.add(recordChangedListener);
     }
 
     /**
@@ -114,18 +111,23 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         return getRecordDao().queryForEq("Mode",mode);
     }
 
-    public  void newRecord(Record r) throws SQLException {
-        Dao<Record,Integer> dao = getRecordDao();
-        Dao<RecordPoint,Integer> pointsDao = getRecordPointsDao();
+    public  void newRecord(final Record r) throws Exception {
+        final  Dao<Record,Integer> dao = getRecordDao();
+        final Dao<RecordPoint,Integer> pointsDao = getRecordPointsDao();
         dao.create(r);
-        //NOTE: the points in Record.Entries may not insert into DB before
-        for (RecordPoint p : r.getEntries()) {
-            p.setGroup(r);
-            pointsDao.create(p);
-        }
+        pointsDao.callBatchTasks(new Callable<Void>() {
+            @Override
+            public Void call() throws SQLException {
+                for (RecordPoint p : r.getEntries()) {
+                    p.setGroup(r);
+                    pointsDao.create(p);
+                }
+                return null;
+            }
+        });
 
-        if (recordChangedListener != null){
-            recordChangedListener.Insert(r);
+        for (OnRecordChangedListener listener : recordChangedListener){
+            listener.Insert(r);
         }
     }
 
