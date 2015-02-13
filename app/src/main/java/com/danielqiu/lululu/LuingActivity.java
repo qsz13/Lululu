@@ -136,7 +136,7 @@ public class LuingActivity extends Activity implements SensorEventListener {
         String out = "x:" + x + " y:" + y + " z:" +z + " m:" +module +" count:"+count+"\n";
        // Log.i("sensor",out);
 
-    }sdk
+    }
 
     public void onStopButtonClick(View view)
     {

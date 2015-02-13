@@ -42,16 +42,14 @@ public class LululuFragment extends Fragment implements DatabaseHelper.OnRecordC
      */
     public static Fragment newInstance(int sectionNumber) {
 
-        LululuFragment fragment = new LululuFragment(RecordType.values()[sectionNumber - 1]);
+        LululuFragment fragment = new LululuFragment();
+        fragment.setRecordType(RecordType.values()[sectionNumber - 1]);
         Bundle args = new Bundle();
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
         fragment.setArguments(args);
         return fragment;
     }
 
-    public LululuFragment(RecordType type) {
-        recordType = type;
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -60,6 +58,7 @@ public class LululuFragment extends Fragment implements DatabaseHelper.OnRecordC
         mRecordsLayout = (LinearLayout)rootView.findViewById(R.id.records);
 
         try {
+            App.getDatabase().setRecordChangedListener(this);
              List<Record> data =App.getDatabase().getRecords(recordType);
             for (Record item : data) {
                 mRecordsLayout.addView(Assemble(item));
@@ -71,6 +70,7 @@ public class LululuFragment extends Fragment implements DatabaseHelper.OnRecordC
 
         return rootView;
     }
+
 
     private LineChart Assemble(Record rec){
         LineChart chart = new LineChart(mRecordsLayout.getContext());
@@ -96,10 +96,17 @@ public class LululuFragment extends Fragment implements DatabaseHelper.OnRecordC
     @Override
     public void Insert(Record record) {
         mRecordsLayout.addView(Assemble(record));
+        mRecordsLayout.invalidate();
     }
+
+
 
     @Override
     public void Delete(Record record) {
         //TODO:remove view
+    }
+
+    public void setRecordType(RecordType recordType) {
+        this.recordType = recordType;
     }
 }

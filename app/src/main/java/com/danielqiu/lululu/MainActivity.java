@@ -21,7 +21,6 @@ public class MainActivity extends ActionBarActivity implements ViewPager.OnPageC
     SectionsPagerAdapter mSectionsPagerAdapter;
     ViewPager mViewPager;
     Button mStartButton;
-    DatabaseHelper db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +85,8 @@ public class MainActivity extends ActionBarActivity implements ViewPager.OnPageC
 
         return super.onOptionsItemSelected(item);
     }
+
+
 
 
     /**
