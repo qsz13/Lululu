@@ -81,7 +81,7 @@ public class LuingActivity extends ActionBarActivity implements SensorEventListe
         String out = "x:" + x + " y:" + y + " z:" +z + " m:" +module +" count:"+count+"\n";
        // Log.i("sensor",out);
 
-    }
+    }sdk
 
     private void addPoint(float x,float y)
     {
