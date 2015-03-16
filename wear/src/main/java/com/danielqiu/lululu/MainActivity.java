@@ -38,7 +38,7 @@ public class MainActivity extends Activity implements SensorEventListener {
         stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
             @Override
             public void onLayoutInflated(WatchViewStub stub) {
-                mTextView = (TextView) stub.findViewById(R.id.text);
+                mTextView = (TextView) stub.findViewById(R.id.countTextView);
             }
         });
         viewUpdater = new Handler();
@@ -66,11 +66,10 @@ public class MainActivity extends Activity implements SensorEventListener {
         String out = event.values[0] + "," + event.values[1] + "," + event.values[2] + ","+getCount();
         Log.d("debug",out);
 
-        //mTextView.setText(out);
         viewUpdater.post(new Runnable() {
             @Override
             public void run() {
-                mTextView.setText("你已经撸了"+getCount()+"次!");
+                mTextView.setText(Integer.toString(getCount()));
             }
         });
 

@@ -4,5 +4,7 @@
     <string name="app_name">撸撸撸</string>
     <string name="hello_round">Hello Round World!</string>
     <string name="hello_square">Hello Square World!</string>
+    <string name="YouLued">你已经撸了</string>
+    <string name="UnitOfLu">次</string>
 
 </resources>
