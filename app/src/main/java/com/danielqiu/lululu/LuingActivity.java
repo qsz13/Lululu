@@ -105,7 +105,7 @@ public class LuingActivity extends Activity implements SensorEventListener {
 
         Calendar curr = Calendar.getInstance();
         try {
-            Record record = new Record(mode,startTime,curr.getTimeInMillis() - startTime.getTimeInMillis() ,count);
+            Record record = new Record(mode,startTime,curr.getTimeInMillis() - startTime.getTimeInMillis() ,getCount());
             record.getEntries().addAll(points);
             App.getDatabase().newRecord(record);
         } catch (Exception e) {
