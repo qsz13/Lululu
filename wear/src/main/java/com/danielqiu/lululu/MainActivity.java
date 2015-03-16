@@ -16,6 +16,22 @@ public class MainActivity extends Activity implements SensorEventListener {
 
     private Handler viewUpdater;
 
+    // flag that should be set true if handler should stop
+    boolean mStopHandler = false;
+
+    Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            if (mTextView != null) {
+                mTextView.setText(Integer.toString(getCount()));
+            }
+
+            if (!mStopHandler) {
+                viewUpdater.postDelayed(this, 300);
+            }
+        }
+    };
+
     private TextView mTextView;
     private SensorManager mSensorManager;
     private Sensor mAccelerometer;
@@ -48,11 +64,14 @@ public class MainActivity extends Activity implements SensorEventListener {
     protected void onResume() {
         super.onResume();
         mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        mStopHandler = false;
+        viewUpdater.post(runnable);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        mStopHandler = true;
         mSensorManager.unregisterListener(this, mAccelerometer);
     }
 
@@ -65,13 +84,6 @@ public class MainActivity extends Activity implements SensorEventListener {
 
         String out = event.values[0] + "," + event.values[1] + "," + event.values[2] + ","+getCount();
         Log.d("debug",out);
-
-        viewUpdater.post(new Runnable() {
-            @Override
-            public void run() {
-                mTextView.setText(Integer.toString(getCount()));
-            }
-        });
 
         lastSensorY = currentSensorY;
     }
