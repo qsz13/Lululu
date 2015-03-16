@@ -31,8 +31,7 @@ public class LuingActivity extends Activity implements SensorEventListener {
 
     private SensorManager mSensorManager;
     private Sensor mAccelerometer;
-    private int count = 0;
-    private Boolean is_up = true;
+    private int peekCount = 0;
     private TextView totalTextView;
     private LineChart mChart;
     private LineData mSensorData;
@@ -57,6 +56,9 @@ public class LuingActivity extends Activity implements SensorEventListener {
         }
     };
 
+    public int getCount(){
+        return peekCount / 2;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,17 +126,11 @@ public class LuingActivity extends Activity implements SensorEventListener {
         float z = event.values[2];
         double module = Math.cbrt(x*x+y*y+z*z);
 
-        if(y>1&& module>3 && !is_up) {
-            is_up = true;
-            count++;
-            totalTextView.setText(count + "!!");
-        }
-        else if (-1>y && module>3 && is_up) {
-            is_up = false;
-        }
+        if (y * lastSensorData[1] <= 0)
+            peekCount++;
 
-        String out = "x:" + x + " y:" + y + " z:" +z + " m:" +module +" count:"+count+"\n";
-       // Log.i("sensor",out);
+        String out = "x:" + x + " y:" + y + " z:" +z + " m:" +module +" count:"+getCount();
+        Log.i("sensor",out);
 
     }
 

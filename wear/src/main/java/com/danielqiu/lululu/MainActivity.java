@@ -7,19 +7,26 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.wearable.view.WatchViewStub;
 import android.util.Log;
 import android.widget.TextView;
 
 public class MainActivity extends Activity implements SensorEventListener {
 
+    private Handler viewUpdater;
+
     private TextView mTextView;
     private SensorManager mSensorManager;
     private Sensor mAccelerometer;
 
-    private float[] lastSensorData = new float[] {0,0,0};
-    private int count = 0;
-    private Boolean is_up = true;
+    private float lastSensorY = 0f;
+
+    private int peekCount = 0;
+
+    public int getCount() {
+        return peekCount /2;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +41,7 @@ public class MainActivity extends Activity implements SensorEventListener {
                 mTextView = (TextView) stub.findViewById(R.id.text);
             }
         });
+        viewUpdater = new Handler();
     }
 
     @Override
@@ -50,20 +58,23 @@ public class MainActivity extends Activity implements SensorEventListener {
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        float x = event.values[0];
-        float y = event.values[1];
-        float z = event.values[2];
-        double module = Math.cbrt(x*x+y*y+z*z);
+        float currentSensorY = event.values[1];
+
+        if ((currentSensorY * lastSensorY)<= 0)
+            peekCount++;
+
+        String out = event.values[0] + "," + event.values[1] + "," + event.values[2] + ","+getCount();
+        Log.d("debug",out);
 
         //mTextView.setText(out);
+        viewUpdater.post(new Runnable() {
+            @Override
+            public void run() {
+                mTextView.setText("你已经撸了"+getCount()+"次!");
+            }
+        });
 
-
-        if ((lastSensorData[1]) * event.values[1] < 0  && module >= 0.3)
-            count++;
-
-        String out = "x:" + x + " y:" + y + " z:" +z + " m:" +module +" count:"+count+"\n";
-        Log.d("debug",out);
-        lastSensorData = event.values.clone();
+        lastSensorY = currentSensorY;
     }
 
     @Override
