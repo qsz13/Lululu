@@ -52,7 +52,9 @@ public class LuingActivity extends Activity implements SensorEventListener {
 
             addPoint(millis,lastSensorData[1]);
 
-            timerHandler.postDelayed(this, 30);
+            totalTextView.setText(getCount()+"!");
+
+            timerHandler.postDelayed(this, 100);
         }
     };
 
@@ -120,7 +122,6 @@ public class LuingActivity extends Activity implements SensorEventListener {
 
     @Override
     public void onSensorChanged(SensorEvent event){
-        lastSensorData = event.values.clone();
         float x = event.values[0];
         float y = event.values[1];
         float z = event.values[2];
@@ -131,6 +132,8 @@ public class LuingActivity extends Activity implements SensorEventListener {
 
         String out = "x:" + x + " y:" + y + " z:" +z + " m:" +module +" count:"+getCount();
         Log.i("sensor",out);
+
+        lastSensorData = event.values.clone();
 
     }
 
