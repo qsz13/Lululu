@@ -83,6 +83,9 @@ public class MainActivity extends Activity implements SensorEventListener {
         if ((currentSensorY * lastSensorY)<= 0)
             peekCount++;
 
+        String out = event.values[0] + "," + event.values[1] + "," + event.values[2] + ","+getCount();
+        Log.d("debug",out);
+
         lastSensorY = currentSensorY;
     }
 
