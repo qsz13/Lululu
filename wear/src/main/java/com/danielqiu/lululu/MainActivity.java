@@ -72,6 +72,7 @@ public class MainActivity extends Activity implements SensorEventListener {
     protected void onPause() {
         super.onPause();
         mStopHandler = true;
+        viewUpdater.removeCallbacks(runnable);
         mSensorManager.unregisterListener(this, mAccelerometer);
     }
 
