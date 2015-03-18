@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.support.wearable.view.WatchViewStub;
 import android.util.Log;
 import android.widget.TextView;
+import java.lang.Math;
 
 public class MainActivity extends Activity implements SensorEventListener {
 
@@ -37,6 +38,9 @@ public class MainActivity extends Activity implements SensorEventListener {
     private Sensor mAccelerometer;
 
     private float lastSensorY = 0f;
+    private static final float MIN_MAGNITUTE_PER_LU = 0.4f;
+    private float currentMagnitude = 0f;
+    private float totalMagnitude = 0f;
 
     private int peekCount = 0;
 
@@ -80,8 +84,14 @@ public class MainActivity extends Activity implements SensorEventListener {
     public void onSensorChanged(SensorEvent event) {
         float currentSensorY = event.values[1];
 
-        if ((currentSensorY * lastSensorY)<= 0)
+        if ((currentSensorY * lastSensorY)< 0)
+            currentMagnitude = 0f;
+
+        if(currentMagnitude < MIN_MAGNITUTE_PER_LU && currentMagnitude + Math.abs(currentSensorY) >= MIN_MAGNITUTE_PER_LU)
             peekCount++;
+
+        currentMagnitude += Math.abs(currentSensorY);
+        totalMagnitude += Math.abs(currentSensorY);
 
         lastSensorY = currentSensorY;
     }

@@ -25,13 +25,18 @@ import com.github.mikephil.charting.data.LineDataSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.lang.Math;
 
 public class LuingActivity extends Activity implements SensorEventListener {
 
+    private static final float MIN_MAGNITUTE_PER_LU =25f;
 
     private SensorManager mSensorManager;
     private Sensor mAccelerometer;
     private int peekCount = 0;
+    private float currentMagnitude = 0f;
+    private float totalMagnitude = 0f;
+
     private TextView totalTextView;
     private LineChart mChart;
     private LineData mSensorData;
@@ -127,8 +132,14 @@ public class LuingActivity extends Activity implements SensorEventListener {
         float z = event.values[2];
         double module = Math.cbrt(x*x+y*y+z*z);
 
-        if (y * lastSensorData[1] <= 0)
+        if (y * lastSensorData[1] < 0f)
+            currentMagnitude = 0f;
+
+        if(currentMagnitude < MIN_MAGNITUTE_PER_LU && currentMagnitude + Math.abs(y) >= MIN_MAGNITUTE_PER_LU)
             peekCount++;
+
+        currentMagnitude += Math.abs(y);
+        totalMagnitude += Math.abs(y);
 
         String out = "x:" + x + " y:" + y + " z:" +z + " m:" +module +" count:"+getCount();
         Log.i("sensor",out);
